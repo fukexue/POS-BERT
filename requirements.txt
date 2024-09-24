@@ -1,0 +1,16 @@
+h5py==3.3.0
+Markdown==3.3.4
+ninja==1.10.0.post3
+numpy==1.21.1
+Pillow==8.3.1
+requests==2.26.0
+scipy==1.7.0
+six==1.16.0
+tensorboard==2.5.0
+tensorboardX==2.4
+lmdb==1.2.1
+scikit-learn==0.24.2
+open3d==0.13.0
+timm==0.6.12
+matplotlib
+msgpack_numpy

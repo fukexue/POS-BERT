@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -ex
+
+
+# # This is the master script for the capsule. When you click "Reproducible Run", the code in this file will execute.
+# #[SVM] link to Table1
+test_name=pretrain
+python -W ignore -u -m torch.distributed.launch \
+       --nproc_per_node=1 \
+       ./eval_svm.py \
+       --pointcloud_size 2048 \
+       --arch pct_large \
+       --pretrained_weights outputs_3D/$test_name/checkpoint.pth \
+       --batch_size_per_gpu 16 \
+       --exp_name $test_name \
+       --dump_features outputs_3D/$test_name/svm_features
+
+
+# # [ScanObjectNN Classification] link to Table2, note: Because the ocean platform cannot configure the Cuda version of pointnet2_ Lib, therefore there is a slight difference in the acc of this version of the code compare to what was reported in out paper. Please refer to the Github repository in the paper for the complete code.
+# OBJ-BG
+python -W ignore -u main_cls.py --exp_name ScanObjectNN_bg_test --eval True --dataset objbg --num_points 2048 --model_path weight/scanobjectnn_bg.t7
+# OBJ-ONLY
+python -W ignore -u  main_cls.py --exp_name ScanObjectNN_only_test --eval True --dataset objonly --num_points 2048 --model_path weight/scanobjectnn_only.t7
+# PB-T50-RS
+python -W ignore -u main_cls.py --exp_name ScanObjectNN_hard_test --eval True --dataset objhard --num_points 2048 --model_path weight/scanobjectnn_hard.t7
+
+
+# #[ModelNet40 Classification] link to Table5
+# eval (no vote)
+python -W ignore main_cls.py --exp_name ModelNet40 --eval True --num_points 8192 --test_batch_size 64 --model_path weight/modelnet40.t7
+# # eval (vote)
+# python main_cls.py --exp_name ModelNet40 --eval True --num_points 8192 --test_batch_size 64 --model_path weight/modelnet40.t7 --vote_epoch 2 --vote True
+
+
+# #[ShapePart Segmentation] link to Table9
+cd segmentation
+python -W ignore main.py --gpu 0 --batch_size 4 --eval True --model_path ../weight/partseg.pth
+
+
