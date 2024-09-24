@@ -25,10 +25,11 @@ __experiment results link to Table1 (ET1)__
 ```angular2html
 chmod a+x 1exp_pretrain_eval_svm.sh
 ./1exp_pretrain_eval_svm.sh
+./run.sh
 ```
 ### Downstream Tasks
 ```angular2html
-cd ../downstream
+cd ../segmentation
 ```
 
 ## License
